@@ -34,14 +34,15 @@ jobs:
               s.about = article.submitter_user.about, 
               s.avatar = "https://lobste.rs" + article.submitter_user.avatar_url 
             MERGE (i:User {username: article.submitter_user.invited_by_user}) 
-            MERGE (i)<- [:INVITED_BY]-(s) 
+            MERGE (i)<-[:INVITED_BY]-(s) 
             MERGE (a:Article {short_id: article.short_id}) 
               SET a.url = article.url, 
-              a.score = article.score, 
-              a.title = article.title, 
-              a.comments = article.comments_url, 
-              a.created = Datetime(article.created_at) 
-            MERGE (s)-[:SUBMITTED]->(a) WITH article, a 
+                  a.score = article.score, 
+                  a.title = article.title, 
+                  a.comments = article.comments_url, 
+                  a.created = Datetime(article.created_at) 
+            MERGE (s)-[:SUBMITTED]->(a) 
+            WITH article, a 
             UNWIND article.tags AS tag 
             MERGE (t:Tag {name: tag}) 
-            MERGE (a)- [:HAS_TAG] ->(t)
+            MERGE (a)-[:HAS_TAG]->(t)
